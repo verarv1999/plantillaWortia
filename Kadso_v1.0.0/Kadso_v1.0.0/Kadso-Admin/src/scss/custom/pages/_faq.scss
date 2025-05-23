@@ -1,0 +1,31 @@
+// 
+// FAQs
+// 
+
+.faq-icon-box {
+    align-items: center;
+    justify-content: center;
+    min-width: 35px;
+    height: 35px;
+    width: 35px;
+    background-color: $white;   
+    border-radius: 5px;
+    float: left;
+    display: flex;
+    border: 2px solid $gray-200;
+}
+
+.f-question {
+    margin-top: 0;
+    margin-left: 60px;
+    font-weight: 600;
+    font-size: 16px;
+    color: $dark;
+}
+.f-answer {
+    margin-left: 60px;
+}
+.icon-md {
+    height: 16px;
+    min-width: 16px;
+}

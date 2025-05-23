@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    @@include("partials/title-meta.html", {"title":"Usuarios"})
+    @@include("partials/head-css.html")
+    <!-- DataTables CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css"
+    />
+  </head>
+
+  @@include("partials/body.html")
+
+  <div id="app-layout">
+    @@include("partials/topbar.html", {"pagetitle":"Panel de Control"})
+    @@include("partials/sidebar.html")
+
+    <div class="content-page">
+      <div class="content">
+        <div class="container-fluid">
+
+          <!-- Título -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h4 class="mb-0">
+                <i class="bi bi-speedometer2 me-2"></i>
+                Panel de Control
+              </h4>
+            </div>
+          </div>
+
+          <div class="row g-4">
+            <!-- Card Formularios -->
+            <div class="col-md-4">
+              <div class="card h-100 shadow-sm">
+                <div
+                  class="card-header d-flex align-items-center justify-content-between"
+                >
+                  <div><i class="bi bi-ui-checks me-2"></i> Formularios</div>
+                  <button
+                    id="btn-create-form"
+                    class="btn btn-sm btn-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#formModal"
+                  >
+                    <i class="bi bi-plus-lg"></i> Crear
+                  </button>
+                </div>
+                <ul id="lista-formularios" class="list-group list-group-flush">
+                  <li class="list-group-item text-center text-muted">Cargando…</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Card Partes -->
+            <div class="col-md-4">
+              <div class="card h-100 shadow-sm">
+                <div
+                  class="card-header d-flex align-items-center justify-content-between"
+                >
+                  <div><i class="bi bi-clipboard-data me-2"></i> Últimos partes</div>
+                  <button id="btn-export-partes" class="btn btn-sm btn-success">
+                    <i class="bi bi-file-earmark-excel"></i> Excel
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div
+                    class="d-flex align-items-center justify-content-end mb-2"
+                  >
+                    <label class="me-2 mb-0">Search:</label>
+                    <input
+                      type="text"
+                      id="search-partes"
+                      class="form-control form-control-sm w-auto"
+                    />
+                  </div>
+                  <div class="table-responsive">
+                    <table
+                      id="tabla-partes"
+                      class="table table-bordered align-middle mb-0"
+                    >
+                      <thead class="table-light">
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Usuario</th>
+                          <th>Teléfono</th>
+                          <th>Tiempo</th>
+                          <th>Ediciones</th>
+                          <th>Confirmado</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Usuarios Permitidos (reemplaza la lista de usuarios) -->
+            <div class="col-md-4">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header">
+                  <i class="bi bi-person-badge-fill me-2"></i>
+                  Gestión de usuarios permitidos
+                </div>
+                <div class="card-body">
+                  <div class="d-flex align-items-center mb-3 gap-2">
+                    <i class="bi bi-phone me-1 fs-4 text-muted"></i>
+                    <input
+                      type="text"
+                      id="input-phone"
+                      class="form-control"
+                      placeholder="+34XXXXXXXXX"
+                    />
+                    <button id="btn-add-phone" class="btn btn-success">
+                      <i class="bi bi-person-plus"></i> Añadir
+                    </button>
+                  </div>
+                  <p class="text-muted">
+                    Máximo permitido:
+                    <strong id="max-count">3</strong> usuario(s).
+                  </p>
+                  <div id="phonesContainer" class="d-flex flex-wrap gap-2">
+                    <!-- aquí irán las badges de teléfonos -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /container-fluid -->
+      </div>   <!-- /content -->
+
+      @@include("partials/footer.html")
+    </div>     <!-- /content-page -->
+  </div>       <!-- /app-layout -->
+
+  @@include("partials/vendor.html")
+
+  <!-- DataTables JS -->
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+  <!-- ======= FORM BUILDER MODAL ======= -->
+  <div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-ui-checks me-2"></i> Gestor de Formulario
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form id="customForm">
+            <div class="mb-3">
+              <label for="formName" class="form-label"
+                >Nombre del formulario</label
+              >
+              <input
+                type="text"
+                id="formName"
+                class="form-control"
+                placeholder="Escribe un nombre"
+                required
+              />
+            </div>
+            <div id="fieldsContainer"></div>
+            <div class="d-flex gap-2 mb-3">
+              <button
+                type="button"
+                id="addField"
+                class="btn btn-success"
+              >
+                <i class="bi bi-plus-circle"></i> Añadir Campo
+              </button>
+            </div>
+            <div class="text-end">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Guardar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- Datos simulados ---
+      let formsData = [
+        { nombre: 'parte_trabajo', campos: [
+            { etiqueta:'Hora inicio', tipo:'time', respuesta:'08:00' },
+            { etiqueta:'Actividad', tipo:'text', respuesta:'Instalación' }
+          ]
+        }
+      ];
+      const partesData = [
+        {
+          fecha: '2025-05-22',
+          usuario: 'Carlos Pérez',
+          telefono: '600123456',
+          tiempo: 3.5,
+          ediciones: 2,
+          confirmado: true
+        },
+        {
+          fecha: '2025-05-21',
+          usuario: 'María López',
+          telefono: '600654321',
+          tiempo: 2.0,
+          ediciones: 1,
+          confirmado: false
+        }
+      ];
+
+      // — Render Formularios —
+      function renderForms() {
+        const ul = document.getElementById('lista-formularios');
+        ul.innerHTML = '';
+        if (!formsData.length) {
+          ul.innerHTML = '<li class="list-group-item text-center text-muted">No hay formularios</li>';
+          return;
+        }
+        formsData.forEach((f,i) => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item d-flex justify-content-between align-items-start';
+          li.innerHTML = `
+            <div>
+              <strong>${f.nombre}</strong><br>
+              <small class="text-muted">${f.campos.length} campos</small>
+            </div>
+            <button class="btn btn-sm btn-outline-primary btn-view" data-index="${i}">
+              <i class="bi bi-eye"></i>
+            </button>
+          `;
+          ul.appendChild(li);
+        });
+      }
+      // Ver detalles
+      document.getElementById('lista-formularios').addEventListener('click', e => {
+        if (e.target.closest('.btn-view')) {
+          const idx = e.target.closest('.btn-view').dataset.index;
+          const f = formsData[idx];
+          alert(
+            `Formulario: ${f.nombre}\n\n` +
+            f.campos.map(c => `${c.etiqueta} (${c.tipo}) = ${c.respuesta}`).join('\n')
+          );
+        }
+      });
+
+      // — DataTable Partes —
+      const tablaPartes = $('#tabla-partes').DataTable({
+        data: partesData,
+        columns: [
+          { data: 'fecha' },
+          { data: 'usuario' },
+          { data: 'telefono' },
+          { data: 'tiempo' },
+          { data: 'ediciones' },
+          {
+            data: 'confirmado',
+            render: v =>
+              v
+                ? '<i class="bi bi-check2-circle text-success"></i>'
+                : '<i class="bi bi-x-circle text-danger"></i>'
+          }
+        ],
+        paging: false,
+        info: false,
+        dom: 't'
+      });
+      document.getElementById('search-partes').addEventListener('keyup', e => {
+        tablaPartes.search(e.target.value).draw();
+      });
+      document.getElementById('btn-export-partes').onclick = () => {
+        const hdr = ['Fecha','Usuario','Teléfono','Tiempo','Ediciones','Confirmado'];
+        const rows = partesData.map(r => [
+          r.fecha, r.usuario, r.telefono, r.tiempo, r.ediciones, r.confirmado?'Sí':'No'
+        ]);
+        let csv = [hdr, ...rows]
+          .map(r => r.map(c => `"${c}"`).join(','))
+          .join('\r\n');
+        const blob = new Blob([csv],{type:'text/csv'});
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url; a.download='partes.csv'; a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      // — Gestión Usuarios Permitidos —
+      let phones = [];
+      const maxPhones = 3;
+      const container = document.getElementById('phonesContainer');
+      const inputPhone = document.getElementById('input-phone');
+      const maxCountEl = document.getElementById('max-count');
+
+      function renderPhones() {
+        container.innerHTML = '';
+        phones.forEach((tel,i) => {
+          const div = document.createElement('div');
+          div.className = 'badge bg-success text-wrap';
+          div.style.padding = '0.6em 1em';
+          div.innerHTML = `
+            ${tel}
+            <button class="btn btn-sm btn-outline-danger ms-2 remove-phone" data-index="${i}">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      document.getElementById('btn-add-phone').addEventListener('click', () => {
+        const tel = inputPhone.value.trim();
+        if (!tel.match(/^\+\d{9,15}$/)) {
+          return alert('Formato inválido. Ej: +34600123456');
+        }
+        if (phones.length >= maxPhones) {
+          return alert(`Sólo se permiten ${maxPhones} usuarios.`);
+        }
+        phones.push(tel);
+        inputPhone.value = '';
+        renderPhones();
+      });
+
+      container.addEventListener('click', e => {
+        if (e.target.closest('.remove-phone')) {
+          const idx = e.target.closest('.remove-phone').dataset.index;
+          phones.splice(idx,1);
+          renderPhones();
+        }
+      });
+
+      // — Form Builder Logic —
+      let fieldCount = 0;
+      const fieldsContainer = document.getElementById('fieldsContainer');
+
+      document.getElementById('addField').addEventListener('click', () => {
+        fieldCount++;
+        const div = document.createElement('div');
+        div.className = 'field-group mb-3';
+        div.innerHTML = `
+          <label class="form-label">Etiqueta</label>
+          <input type="text" class="form-control mb-2 field-label" placeholder="Etiqueta" required>
+          <label class="form-label">Tipo</label>
+          <select class="form-select mb-2 field-type">
+            <option value="text">Texto</option>
+            <option value="number">Número</option>
+            <option value="date">Fecha</option>
+            <option value="time">Hora</option>
+          </select>
+          <label class="form-label">Respuesta inicial</label>
+          <input type="text" class="form-control mb-2 field-answer" placeholder="Respuesta">
+          <button type="button" class="btn btn-sm btn-outline-danger remove-field">
+            <i class="bi bi-x-circle"></i> Eliminar
+          </button>
+          <hr>
+        `;
+        fieldsContainer.appendChild(div);
+      });
+
+      fieldsContainer.addEventListener('click', e => {
+        if (e.target.closest('.remove-field')) {
+          e.target.closest('.field-group').remove();
+        }
+      });
+
+      document.getElementById('customForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const name = document.getElementById('formName').value.trim();
+        const campos = [];
+        document.querySelectorAll('.field-group').forEach(g => {
+          campos.push({
+            etiqueta: g.querySelector('.field-label').value.trim(),
+            tipo: g.querySelector('.field-type').value,
+            respuesta: g.querySelector('.field-answer').value
+          });
+        });
+        formsData.push({ nombre: name, campos });
+        renderForms();
+        document.getElementById('customForm').reset();
+        fieldsContainer.innerHTML = '';
+        fieldCount = 0;
+        bootstrap.Modal.getInstance(document.getElementById('formModal')).hide();
+      });
+
+      // Inicial
+      renderForms();
+      renderPhones();
+    });
+  </script>
+</body>
+</html>

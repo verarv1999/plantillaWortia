@@ -1,0 +1,66 @@
+<!-- src/html/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Meta y título -->
+    @@include("partials/title-meta.html", { "title": "Dashboard" })
+
+    <!-- CSS principal -->
+    @@include("partials/head-css.html")
+  </head>
+
+  <!-- body start -->
+  @@include("partials/body.html")
+
+    <div class="layout-wrapper">
+
+      <!-- Topbar + tu sidebar personalizado -->
+      @@include("partials/menu.html")
+
+      <!-- Contenido principal -->
+      <div class="content-page">
+        <div class="content">
+          <div class="container-fluid">
+
+            <!-- Título de la página -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <h4 class="mb-0">Dashboard</h4>
+              </div>
+            </div>
+
+            <!-- Ejemplo: un widget -->
+            <div class="row">
+              <div class="col-md-6 col-xl-3">
+                <div class="card">
+                  <div class="card-body">
+                    <p class="text-muted mb-1">Total Images</p>
+                    <h4 class="mb-0">45 GB Space</h4>
+                  </div>
+                </div>
+              </div>
+              <!-- … añade aquí más columnas/widgets … -->
+            </div>
+
+          </div> <!-- /container-fluid -->
+        </div>   <!-- /content -->
+
+        <!-- Footer -->
+        @@include("partials/footer.html")
+      </div>     <!-- /content-page -->
+
+    </div> <!-- /layout-wrapper -->
+
+    <!-- Vendor scripts (jQuery, Bootstrap…) -->
+    @@include("partials/vendor.html")
+
+    <!-- Scripts específicos del dashboard -->
+    <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+    <script src="https://apexcharts.com/samples/assets/stock-prices.js"></script>
+    <script src="assets/js/pages/dashboard.init.js"></script>
+
+    <!-- App JS -->
+    <script src="assets/js/app.js"></script>
+
+  </body>
+</html>
